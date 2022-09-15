@@ -514,6 +514,63 @@
         }
       }
     },
+    "/_jobs/user": {
+      "get": {
+        "tags": [
+          "job-controller"
+        ],
+        "operationId": "getJobsForUser",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/JobInfoDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/_jobs/project": {
+      "get": {
+        "tags": [
+          "job-controller"
+        ],
+        "operationId": "getJobsByProject",
+        "parameters": [
+          {
+            "name": "project_uid",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/JobInfoDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/_cohorts/node_matchstates": {
       "get": {
         "tags": [
