@@ -10,12 +10,27 @@
       "description": "Generated server url"
     }
   ],
+  "tags": [
+    {
+      "name": "Project Controller",
+      "description": "Operations relating to Project Creation and Management"
+    },
+    {
+      "name": "Cohort Controller",
+      "description": "Cohort and Evidence Related Methods, Including Results and Evidence Judgements"
+    },
+    {
+      "name": "Job Controller",
+      "description": "Operations relating to Job Creation, Management, and Status"
+    }
+  ],
   "paths": {
     "/_projects/create": {
       "put": {
         "tags": [
-          "project-controller"
+          "Project Controller"
         ],
+        "summary": "Creates a new project with the given name with the calling user set to owner",
         "operationId": "createProject",
         "parameters": [
           {
@@ -44,8 +59,9 @@
     "/_projects/roles": {
       "post": {
         "tags": [
-          "project-controller"
+          "Project Controller"
         ],
+        "summary": "Sets the given project authority/role grant",
         "operationId": "setUserRole",
         "requestBody": {
           "content": {
@@ -74,8 +90,9 @@
     "/_projects/rename": {
       "post": {
         "tags": [
-          "project-controller"
+          "Project Controller"
         ],
+        "summary": "Renames the project associated with the given project UID to the given name",
         "operationId": "renameProject",
         "parameters": [
           {
@@ -113,8 +130,10 @@
     "/_projects/criterion": {
       "get": {
         "tags": [
-          "project-controller"
+          "Project Controller"
         ],
+        "summary": "Gets the current (latest) revision of a criterion associated with a given project UID. ",
+        "description": "Note that for jobs, the associated method under /_cohorts should be called instead using job UID as a parameter as the criterion associated with a prior job may be different from the latest revision",
         "operationId": "getProjectCriterion",
         "parameters": [
           {
@@ -142,8 +161,9 @@
       },
       "post": {
         "tags": [
-          "project-controller"
+          "Project Controller"
         ],
+        "summary": "Updates the criterion associated with a given project UID",
         "operationId": "writeProjectCriterion",
         "parameters": [
           {
@@ -183,8 +203,9 @@
     "/_jobs/create": {
       "post": {
         "tags": [
-          "job-controller"
+          "Job Controller"
         ],
+        "summary": "Queues a new job for the given project UID",
         "operationId": "createJob",
         "parameters": [
           {
@@ -214,8 +235,9 @@
     "/_jobs/cancel": {
       "post": {
         "tags": [
-          "job-controller"
+          "Job Controller"
         ],
+        "summary": "Cancels the job associated with the given job UID",
         "operationId": "cancelJob",
         "parameters": [
           {
@@ -245,8 +267,9 @@
     "/_cohorts/relevance": {
       "get": {
         "tags": [
-          "cohort-controller"
+          "Cohort Controller"
         ],
+        "summary": "Gets current inclusion status for the given job and list of candidate patient UIDs",
         "operationId": "getCohortRelevance",
         "parameters": [
           {
@@ -293,8 +316,9 @@
       },
       "post": {
         "tags": [
-          "cohort-controller"
+          "Cohort Controller"
         ],
+        "summary": "Writes current inclusion status for the given job and candidate patient UID",
         "operationId": "writeCohortRelevance",
         "parameters": [
           {
@@ -342,11 +366,73 @@
         }
       }
     },
-    "/_cohorts/evidence": {
+    "/_cohorts/evidence_relevance": {
+      "get": {
+        "tags": [
+          "Cohort Controller"
+        ],
+        "summary": "Gets match judgement (if present), or algorithmicly determined judgement for a given list of evidence UIDs associated with a given job and criterion (node) UID",
+        "operationId": "getEvidenceRelevance",
+        "parameters": [
+          {
+            "name": "job_uid",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "node_uid",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "evidence_uid",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string",
+                    "enum": [
+                      "JUDGED_MATCH",
+                      "JUDGED_MISMATCH",
+                      "EVIDENCE_FOUND",
+                      "EVIDENCE_FOUND_NLP",
+                      "NO_EVIDENCE_FOUND",
+                      "UNJUDGED"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "tags": [
-          "cohort-controller"
+          "Cohort Controller"
         ],
+        "summary": "Writes match judgement for a given evidence UID associated with a given job and criterion (node) UID",
         "operationId": "writeEvidenceRelevance",
         "parameters": [
           {
@@ -409,8 +495,9 @@
     "/_cohorts/criterion_match_status": {
       "get": {
         "tags": [
-          "cohort-controller"
+          "Cohort Controller"
         ],
+        "summary": "Gets match judgement (if present), or algorithmicly determined judgement for all nodes of the Criterion associated with the given job UID",
         "operationId": "getCriterionMatchStatus",
         "parameters": [
           {
@@ -441,8 +528,9 @@
       },
       "post": {
         "tags": [
-          "cohort-controller"
+          "Cohort Controller"
         ],
+        "summary": "Writes criterion match judgement for the given job and criterion (node) UID",
         "operationId": "setCriterionMatchStatus",
         "parameters": [
           {
@@ -494,8 +582,9 @@
     "/_projects/": {
       "get": {
         "tags": [
-          "project-controller"
+          "Project Controller"
         ],
+        "summary": "Gets listing of projects to which the calling user has read access",
         "operationId": "getProjectList",
         "responses": {
           "200": {
@@ -517,8 +606,9 @@
     "/_jobs/user": {
       "get": {
         "tags": [
-          "job-controller"
+          "Job Controller"
         ],
+        "summary": "Gets a listing of jobs associated to the calling user, sorted by date in descending order",
         "operationId": "getJobsForUser",
         "responses": {
           "200": {
@@ -540,8 +630,9 @@
     "/_jobs/project": {
       "get": {
         "tags": [
-          "job-controller"
+          "Job Controller"
         ],
+        "summary": "Gets a listing of jobs associated with the given project UID, sorted by date in descending order",
         "operationId": "getJobsByProject",
         "parameters": [
           {
@@ -571,73 +662,12 @@
         }
       }
     },
-    "/_cohorts/node_matchstates": {
-      "get": {
-        "tags": [
-          "cohort-controller"
-        ],
-        "operationId": "getEvidenceRelevance",
-        "parameters": [
-          {
-            "name": "job_uid",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "node_uid",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "evidence_uid",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string",
-                    "enum": [
-                      "JUDGED_MATCH",
-                      "JUDGED_MISMATCH",
-                      "EVIDENCE_FOUND",
-                      "EVIDENCE_FOUND_NLP",
-                      "NO_EVIDENCE_FOUND",
-                      "UNJUDGED"
-                    ]
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/_cohorts/node_evidence": {
       "get": {
         "tags": [
-          "cohort-controller"
+          "Cohort Controller"
         ],
+        "summary": "Get a Listing of Evidence for a given Job/Patient on a Specific Criterion (node) UID",
         "operationId": "getEvidenceForNode",
         "parameters": [
           {
@@ -684,11 +714,45 @@
         }
       }
     },
+    "/_cohorts/criterion": {
+      "get": {
+        "tags": [
+          "Cohort Controller"
+        ],
+        "summary": "Gets the revision of a criterion associated with a given job UID. ",
+        "description": "Note that for projects, the associated method under /_projects should be called instead using project UID as a parameter as the criterion associated with a prior job may be different from the latest revision being edited",
+        "operationId": "getJobCriterion",
+        "parameters": [
+          {
+            "name": "job_uid",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Criterion"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/_cohorts/": {
       "get": {
         "tags": [
-          "cohort-controller"
+          "Cohort Controller"
         ],
+        "summary": "Get a Listing of Cohort Candidate by Job UID",
         "operationId": "getRetrievedCohort",
         "parameters": [
           {
@@ -721,8 +785,9 @@
     "/_projects/archive": {
       "delete": {
         "tags": [
-          "project-controller"
+          "Project Controller"
         ],
+        "summary": "Archives the project associated with the given project UID",
         "operationId": "archiveProject",
         "parameters": [
           {
@@ -752,8 +817,9 @@
     "/_jobs/": {
       "delete": {
         "tags": [
-          "job-controller"
+          "Job Controller"
         ],
+        "summary": "Archives the job associated with the given job UID",
         "operationId": "archiveJob",
         "parameters": [
           {
