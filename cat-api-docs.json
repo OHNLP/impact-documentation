@@ -33,7 +33,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectDTO"
+                  "$ref": "#/components/schemas/Project"
                 }
               }
             }
@@ -51,7 +51,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ProjectRoleDTO"
+                "$ref": "#/components/schemas/ProjectRole"
               }
             }
           },
@@ -102,7 +102,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectDTO"
+                  "$ref": "#/components/schemas/Project"
                 }
               }
             }
@@ -133,7 +133,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/CriterionDefinitionDTO"
+                  "$ref": "#/components/schemas/Criterion"
                 }
               }
             }
@@ -160,7 +160,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CriterionDefinitionDTO"
+                "$ref": "#/components/schemas/Criterion"
               }
             }
           },
@@ -203,7 +203,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/JobInfoDTO"
+                  "$ref": "#/components/schemas/Job"
                 }
               }
             }
@@ -431,7 +431,7 @@
                 "schema": {
                   "type": "object",
                   "additionalProperties": {
-                    "$ref": "#/components/schemas/JudgementDTO"
+                    "$ref": "#/components/schemas/CriterionInfo"
                   }
                 }
               }
@@ -468,7 +468,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/JudgementDTO"
+                "$ref": "#/components/schemas/CriterionInfo"
               }
             }
           },
@@ -482,7 +482,7 @@
                 "schema": {
                   "type": "object",
                   "additionalProperties": {
-                    "$ref": "#/components/schemas/JudgementDTO"
+                    "$ref": "#/components/schemas/CriterionInfo"
                   }
                 }
               }
@@ -505,7 +505,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ProjectDTO"
+                    "$ref": "#/components/schemas/Project"
                   }
                 }
               }
@@ -528,7 +528,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/JobInfoDTO"
+                    "$ref": "#/components/schemas/Job"
                   }
                 }
               }
@@ -562,7 +562,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/JobInfoDTO"
+                    "$ref": "#/components/schemas/Job"
                   }
                 }
               }
@@ -675,7 +675,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/EvidenceDTO"
+                    "$ref": "#/components/schemas/Evidence"
                   }
                 }
               }
@@ -709,7 +709,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/PatInfoDTO"
+                    "$ref": "#/components/schemas/CohortCandidate"
                   }
                 }
               }
@@ -783,7 +783,7 @@
   },
   "components": {
     "schemas": {
-      "ProjectDTO": {
+      "Project": {
         "type": "object",
         "properties": {
           "uid": {
@@ -795,13 +795,13 @@
           }
         }
       },
-      "ProjectRoleDTO": {
+      "ProjectRole": {
         "type": "object",
         "properties": {
-          "user_uid": {
+          "userUID": {
             "type": "string"
           },
-          "project_uid": {
+          "projectUID": {
             "type": "string",
             "format": "uuid"
           },
@@ -817,94 +817,23 @@
           }
         }
       },
-      "CriterionDefinitionDTO": {
+      "Criterion": {
         "type": "object",
         "properties": {
-          "node_id": {
+          "nodeUID": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "Job": {
+        "type": "object",
+        "properties": {
+          "projectUID": {
             "type": "string",
             "format": "uuid"
           },
-          "node_type": {
-            "type": "string",
-            "enum": [
-              "BOOLEAN",
-              "RELATIONAL",
-              "ENTITY"
-            ]
-          },
-          "entity": {
-            "$ref": "#/components/schemas/EntityDefinitionDTO"
-          },
-          "children": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CriterionDefinitionDTO"
-            }
-          }
-        }
-      },
-      "EntityDefinitionDTO": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "PERSON",
-              "CONDITION",
-              "PROCEDURE",
-              "MEDICATION",
-              "OBSERVATION"
-            ]
-          },
-          "definitionComponents": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ValueDefinitionDTO"
-            }
-          }
-        }
-      },
-      "ValueDefinitionDTO": {
-        "type": "object",
-        "properties": {
-          "valuePath": {
-            "type": "string",
-            "enum": [
-              "CONDITION_CODE",
-              "PROCEDURE_CODE",
-              "MEDICATION_CODE",
-              "OBSERVATION_CODE",
-              "OBSERVATION_VALUE"
-            ]
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "LT",
-              "LTE",
-              "GT",
-              "GTE",
-              "EQ",
-              "RANGE",
-              "IN"
-            ]
-          },
-          "values": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "JobInfoDTO": {
-        "type": "object",
-        "properties": {
-          "project_uid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "job_uid": {
+          "jobUID": {
             "type": "string",
             "format": "uuid"
           },
@@ -925,7 +854,7 @@
           }
         }
       },
-      "JudgementDTO": {
+      "CriterionInfo": {
         "type": "object",
         "properties": {
           "judgement": {
@@ -944,7 +873,7 @@
           }
         }
       },
-      "EvidenceDTO": {
+      "Evidence": {
         "type": "object",
         "properties": {
           "evidenceUID": {
@@ -956,10 +885,10 @@
           }
         }
       },
-      "PatInfoDTO": {
+      "CohortCandidate": {
         "type": "object",
         "properties": {
-          "pat_id": {
+          "patUID": {
             "type": "string"
           },
           "inclusion": {
