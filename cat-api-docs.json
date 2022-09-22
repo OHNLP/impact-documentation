@@ -508,6 +508,14 @@
               "type": "string",
               "format": "uuid"
             }
+          },
+          {
+            "name": "person_uid",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -530,7 +538,7 @@
         "tags": [
           "Cohort Controller"
         ],
-        "summary": "Writes criterion match judgement for the given job and criterion (node) UID",
+        "summary": "Writes criterion match judgement for the given job, person, and criterion (node) UID",
         "operationId": "setCriterionMatchStatus",
         "parameters": [
           {
@@ -549,6 +557,14 @@
             "schema": {
               "type": "string",
               "format": "uuid"
+            }
+          },
+          {
+            "name": "person_uid",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
           }
         ],
