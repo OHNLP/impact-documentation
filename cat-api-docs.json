@@ -152,7 +152,14 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/Criterion"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/EntityCriterion"
+                    },
+                    {
+                      "$ref": "#/components/schemas/LogicalCriterion"
+                    }
+                  ]
                 }
               }
             }
@@ -180,7 +187,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Criterion"
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/EntityCriterion"
+                  },
+                  {
+                    "$ref": "#/components/schemas/LogicalCriterion"
+                  }
+                ]
               }
             }
           },
@@ -792,7 +806,14 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/Criterion"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/EntityCriterion"
+                    },
+                    {
+                      "$ref": "#/components/schemas/LogicalCriterion"
+                    }
+                  ]
                 }
               }
             }
@@ -937,22 +958,123 @@
         }
       },
       "Criterion": {
-        "required": [
-          "class"
-        ],
         "type": "object",
         "properties": {
           "nodeUID": {
             "type": "string",
             "format": "uuid"
           },
-          "class": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "nodeType": {
             "type": "string"
           }
         },
         "discriminator": {
-          "propertyName": "class"
+          "propertyName": "nodeType"
         }
+      },
+      "EntityCriterion": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Criterion"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "PERSON",
+                  "CONDITION",
+                  "PROCEDURE",
+                  "MEDICATION",
+                  "OBSERVATION"
+                ]
+              },
+              "components": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/EntityValue"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "EntityValue": {
+        "type": "object",
+        "properties": {
+          "valuePath": {
+            "type": "string",
+            "enum": [
+              "PERSON_ID",
+              "PERSON_GENDER",
+              "PERSON_DOB",
+              "CONDITION_CODE",
+              "PROCEDURE_CODE",
+              "MEDICATION_CODE",
+              "OBSERVATION_CODE",
+              "OBSERVATION_VALUE"
+            ]
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reln": {
+            "type": "string",
+            "enum": [
+              "LT",
+              "LTE",
+              "GT",
+              "GTE",
+              "EQ",
+              "RANGE",
+              "IN",
+              "BETWEEN"
+            ]
+          }
+        }
+      },
+      "LogicalCriterion": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Criterion"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "AND",
+                  "MIN_OR",
+                  "MAX_OR",
+                  "NOT"
+                ]
+              },
+              "numericModifier": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "children": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Criterion"
+                }
+              }
+            }
+          }
+        ]
       },
       "Job": {
         "type": "object",
@@ -1043,11 +1165,11 @@
           "booleanPrimitive": {
             "type": "boolean"
           },
-          "valueAsString": {
-            "type": "string"
-          },
           "value": {
             "type": "boolean"
+          },
+          "valueAsString": {
+            "type": "string"
           },
           "empty": {
             "type": "boolean"
@@ -1055,19 +1177,19 @@
           "primitive": {
             "type": "boolean"
           },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
-          },
           "idElement": {
             "$ref": "#/components/schemas/StringType"
           },
           "idBase": {
             "type": "string"
           },
-          "dateTime": {
-            "type": "boolean"
+          "extensionFirstRep": {
+            "$ref": "#/components/schemas/Extension"
           },
           "resource": {
+            "type": "boolean"
+          },
+          "dateTime": {
             "type": "boolean"
           }
         }
@@ -1099,9 +1221,6 @@
           "disallowExtensions": {
             "type": "boolean"
           },
-          "valueAsString": {
-            "type": "string"
-          },
           "primitive": {
             "type": "boolean"
           },
@@ -1111,8 +1230,8 @@
           "value": {
             "type": "string"
           },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
+          "valueAsString": {
+            "type": "string"
           },
           "idElement": {
             "$ref": "#/components/schemas/StringType"
@@ -1120,13 +1239,16 @@
           "idBase": {
             "type": "string"
           },
+          "extensionFirstRep": {
+            "$ref": "#/components/schemas/Extension"
+          },
+          "resource": {
+            "type": "boolean"
+          },
           "booleanPrimitive": {
             "type": "boolean"
           },
           "dateTime": {
-            "type": "boolean"
-          },
-          "resource": {
             "type": "boolean"
           }
         }
@@ -1161,19 +1283,16 @@
           "system": {
             "type": "string"
           },
-          "display": {
+          "version": {
             "type": "string"
           },
           "code": {
             "type": "string"
           },
-          "version": {
+          "display": {
             "type": "string"
           },
           "valueNotNull": {
-            "type": "string"
-          },
-          "valueAsString": {
             "type": "string"
           },
           "primitive": {
@@ -1185,8 +1304,8 @@
           "value": {
             "type": "string"
           },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
+          "valueAsString": {
+            "type": "string"
           },
           "idElement": {
             "$ref": "#/components/schemas/StringType"
@@ -1194,13 +1313,16 @@
           "idBase": {
             "type": "string"
           },
+          "extensionFirstRep": {
+            "$ref": "#/components/schemas/Extension"
+          },
+          "resource": {
+            "type": "boolean"
+          },
           "booleanPrimitive": {
             "type": "boolean"
           },
           "dateTime": {
-            "type": "boolean"
-          },
-          "resource": {
             "type": "boolean"
           }
         }
@@ -1247,14 +1369,8 @@
           "userSelected": {
             "type": "boolean"
           },
-          "userSelectedElement": {
-            "$ref": "#/components/schemas/BooleanType"
-          },
-          "versionElement": {
-            "$ref": "#/components/schemas/StringType"
-          },
-          "displayElement": {
-            "$ref": "#/components/schemas/StringType"
+          "empty": {
+            "type": "boolean"
           },
           "systemElement": {
             "$ref": "#/components/schemas/UriType"
@@ -1262,11 +1378,14 @@
           "codeElement": {
             "$ref": "#/components/schemas/CodeType"
           },
-          "empty": {
-            "type": "boolean"
+          "userSelectedElement": {
+            "$ref": "#/components/schemas/BooleanType"
           },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
+          "displayElement": {
+            "$ref": "#/components/schemas/StringType"
+          },
+          "versionElement": {
+            "$ref": "#/components/schemas/StringType"
           },
           "idElement": {
             "$ref": "#/components/schemas/StringType"
@@ -1274,16 +1393,19 @@
           "idBase": {
             "type": "string"
           },
-          "booleanPrimitive": {
-            "type": "boolean"
-          },
-          "dateTime": {
-            "type": "boolean"
+          "extensionFirstRep": {
+            "$ref": "#/components/schemas/Extension"
           },
           "primitive": {
             "type": "boolean"
           },
           "resource": {
+            "type": "boolean"
+          },
+          "booleanPrimitive": {
+            "type": "boolean"
+          },
+          "dateTime": {
             "type": "boolean"
           }
         }
@@ -1339,11 +1461,11 @@
           "empty": {
             "type": "boolean"
           },
-          "idElement": {
-            "$ref": "#/components/schemas/IdType"
-          },
           "languageElement": {
             "$ref": "#/components/schemas/CodeType"
+          },
+          "idElement": {
+            "$ref": "#/components/schemas/IdType"
           },
           "structureFhirVersionEnum": {
             "type": "string",
@@ -1507,22 +1629,22 @@
               "VisionPrescription"
             ]
           },
-          "idBase": {
-            "type": "string"
-          },
           "implicitRulesElement": {
             "$ref": "#/components/schemas/UriType"
           },
+          "idBase": {
+            "type": "string"
+          },
           "resource": {
+            "type": "boolean"
+          },
+          "primitive": {
             "type": "boolean"
           },
           "booleanPrimitive": {
             "type": "boolean"
           },
           "dateTime": {
-            "type": "boolean"
-          },
-          "primitive": {
             "type": "boolean"
           }
         }
@@ -1557,22 +1679,19 @@
           "disallowExtensions": {
             "type": "boolean"
           },
-          "system": {
-            "type": "string"
-          },
-          "display": {
-            "type": "string"
-          },
-          "code": {
+          "version": {
             "type": "string"
           },
           "enumFactory": {
             "$ref": "#/components/schemas/EnumFactoryNarrativeStatus"
           },
-          "version": {
+          "system": {
             "type": "string"
           },
-          "valueAsString": {
+          "code": {
+            "type": "string"
+          },
+          "display": {
             "type": "string"
           },
           "value": {
@@ -1585,14 +1704,14 @@
               "NULL"
             ]
           },
+          "valueAsString": {
+            "type": "string"
+          },
           "empty": {
             "type": "boolean"
           },
           "primitive": {
             "type": "boolean"
-          },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
           },
           "idElement": {
             "$ref": "#/components/schemas/StringType"
@@ -1600,13 +1719,16 @@
           "idBase": {
             "type": "string"
           },
+          "extensionFirstRep": {
+            "$ref": "#/components/schemas/Extension"
+          },
+          "resource": {
+            "type": "boolean"
+          },
           "booleanPrimitive": {
             "type": "boolean"
           },
           "dateTime": {
-            "type": "boolean"
-          },
-          "resource": {
             "type": "boolean"
           }
         }
@@ -1638,17 +1760,14 @@
           "value": {
             "$ref": "#/components/schemas/Type"
           },
-          "urlElement": {
-            "$ref": "#/components/schemas/UriType"
-          },
           "empty": {
             "type": "boolean"
           },
+          "urlElement": {
+            "$ref": "#/components/schemas/UriType"
+          },
           "valueAsPrimitive": {
             "$ref": "#/components/schemas/IPrimitiveTypeObject"
-          },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
           },
           "idElement": {
             "$ref": "#/components/schemas/StringType"
@@ -1656,16 +1775,19 @@
           "idBase": {
             "type": "string"
           },
-          "booleanPrimitive": {
-            "type": "boolean"
-          },
-          "dateTime": {
-            "type": "boolean"
+          "extensionFirstRep": {
+            "$ref": "#/components/schemas/Extension"
           },
           "primitive": {
             "type": "boolean"
           },
           "resource": {
+            "type": "boolean"
+          },
+          "booleanPrimitive": {
+            "type": "boolean"
+          },
+          "dateTime": {
             "type": "boolean"
           }
         }
@@ -1673,17 +1795,14 @@
       "IPrimitiveTypeObject": {
         "type": "object",
         "properties": {
-          "valueAsString": {
-            "type": "string"
-          },
           "value": {
             "type": "object"
           },
-          "formatCommentsPre": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+          "valueAsString": {
+            "type": "string"
+          },
+          "empty": {
+            "type": "boolean"
           },
           "formatCommentsPost": {
             "type": "array",
@@ -1691,8 +1810,11 @@
               "type": "string"
             }
           },
-          "empty": {
-            "type": "boolean"
+          "formatCommentsPre": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -1723,47 +1845,6 @@
           "disallowExtensions": {
             "type": "boolean"
           },
-          "local": {
-            "type": "boolean"
-          },
-          "versionIdPartAsLong": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "versionIdPartValidLong": {
-            "type": "boolean"
-          },
-          "idPartAsBigDecimal": {
-            "type": "number"
-          },
-          "idPart": {
-            "type": "string"
-          },
-          "idPartAsLong": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "valueAsString": {
-            "type": "string"
-          },
-          "versionIdPart": {
-            "type": "string"
-          },
-          "urn": {
-            "type": "boolean"
-          },
-          "idPartValidLong": {
-            "type": "boolean"
-          },
-          "idPartValid": {
-            "type": "boolean"
-          },
-          "resourceType": {
-            "type": "string"
-          },
-          "baseUrl": {
-            "type": "string"
-          },
           "empty": {
             "type": "boolean"
           },
@@ -1773,11 +1854,49 @@
           "absolute": {
             "type": "boolean"
           },
-          "primitive": {
+          "local": {
             "type": "boolean"
           },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
+          "valueAsString": {
+            "type": "string"
+          },
+          "resourceType": {
+            "type": "string"
+          },
+          "baseUrl": {
+            "type": "string"
+          },
+          "idPartAsBigDecimal": {
+            "type": "number"
+          },
+          "versionIdPartValidLong": {
+            "type": "boolean"
+          },
+          "versionIdPartAsLong": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "urn": {
+            "type": "boolean"
+          },
+          "idPartValid": {
+            "type": "boolean"
+          },
+          "idPart": {
+            "type": "string"
+          },
+          "idPartAsLong": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "versionIdPart": {
+            "type": "string"
+          },
+          "idPartValidLong": {
+            "type": "boolean"
+          },
+          "primitive": {
+            "type": "boolean"
           },
           "idElement": {
             "$ref": "#/components/schemas/StringType"
@@ -1785,13 +1904,16 @@
           "idBase": {
             "type": "string"
           },
+          "extensionFirstRep": {
+            "$ref": "#/components/schemas/Extension"
+          },
+          "resource": {
+            "type": "boolean"
+          },
           "booleanPrimitive": {
             "type": "boolean"
           },
           "dateTime": {
-            "type": "boolean"
-          },
-          "resource": {
             "type": "boolean"
           }
         }
@@ -1823,7 +1945,34 @@
           "disallowExtensions": {
             "type": "boolean"
           },
+          "value": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "precision": {
+            "type": "string",
+            "enum": [
+              "YEAR",
+              "MONTH",
+              "DAY",
+              "MINUTE",
+              "SECOND",
+              "MILLI"
+            ]
+          },
           "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hour": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minute": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "second": {
             "type": "integer",
             "format": "int32"
           },
@@ -1842,11 +1991,11 @@
           "timeZone": {
             "type": "object",
             "properties": {
-              "rawOffset": {
+              "dstsavings": {
                 "type": "integer",
                 "format": "int32"
               },
-              "dstsavings": {
+              "rawOffset": {
                 "type": "integer",
                 "format": "int32"
               },
@@ -1858,16 +2007,12 @@
               }
             }
           },
-          "precision": {
-            "type": "string",
-            "enum": [
-              "YEAR",
-              "MONTH",
-              "DAY",
-              "MINUTE",
-              "SECOND",
-              "MILLI"
-            ]
+          "nanos": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "dateTime": {
+            "type": "boolean"
           },
           "valueAsString": {
             "type": "string"
@@ -1875,39 +2020,16 @@
           "timeZoneZulu": {
             "type": "boolean"
           },
-          "today": {
-            "type": "boolean"
-          },
-          "hour": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "minute": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "second": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "valueAsV3String": {
-            "type": "string",
-            "writeOnly": true
-          },
           "valueAsCalendar": {
             "type": "string",
             "format": "date-time"
           },
-          "dateTime": {
+          "today": {
             "type": "boolean"
           },
-          "nanos": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "value": {
+          "valueAsV3String": {
             "type": "string",
-            "format": "date-time"
+            "writeOnly": true
           },
           "primitive": {
             "type": "boolean"
@@ -1915,19 +2037,19 @@
           "empty": {
             "type": "boolean"
           },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
-          },
           "idElement": {
             "$ref": "#/components/schemas/StringType"
           },
           "idBase": {
             "type": "string"
           },
-          "booleanPrimitive": {
-            "type": "boolean"
+          "extensionFirstRep": {
+            "$ref": "#/components/schemas/Extension"
           },
           "resource": {
+            "type": "boolean"
+          },
+          "booleanPrimitive": {
             "type": "boolean"
           }
         }
@@ -2000,14 +2122,17 @@
               "$ref": "#/components/schemas/Coding"
             }
           },
+          "empty": {
+            "type": "boolean"
+          },
+          "versionIdElement": {
+            "$ref": "#/components/schemas/IdType"
+          },
           "lastUpdatedElement": {
             "$ref": "#/components/schemas/InstantType"
           },
           "securityFirstRep": {
             "$ref": "#/components/schemas/Coding"
-          },
-          "versionIdElement": {
-            "$ref": "#/components/schemas/IdType"
           },
           "sourceElement": {
             "$ref": "#/components/schemas/UriType"
@@ -2015,28 +2140,25 @@
           "tagFirstRep": {
             "$ref": "#/components/schemas/Coding"
           },
-          "empty": {
-            "type": "boolean"
-          },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
-          },
           "idElement": {
             "$ref": "#/components/schemas/StringType"
           },
           "idBase": {
             "type": "string"
           },
-          "booleanPrimitive": {
-            "type": "boolean"
-          },
-          "dateTime": {
-            "type": "boolean"
+          "extensionFirstRep": {
+            "$ref": "#/components/schemas/Extension"
           },
           "primitive": {
             "type": "boolean"
           },
           "resource": {
+            "type": "boolean"
+          },
+          "booleanPrimitive": {
+            "type": "boolean"
+          },
+          "dateTime": {
             "type": "boolean"
           }
         }
@@ -2081,11 +2203,11 @@
           "div": {
             "$ref": "#/components/schemas/XhtmlNode"
           },
-          "statusElement": {
-            "$ref": "#/components/schemas/EnumerationNarrativeStatus"
-          },
           "empty": {
             "type": "boolean"
+          },
+          "statusElement": {
+            "$ref": "#/components/schemas/EnumerationNarrativeStatus"
           },
           "divAsString": {
             "type": "string"
@@ -2093,25 +2215,25 @@
           "statusAsString": {
             "type": "string"
           },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
-          },
           "idElement": {
             "$ref": "#/components/schemas/StringType"
           },
           "idBase": {
             "type": "string"
           },
-          "booleanPrimitive": {
-            "type": "boolean"
-          },
-          "dateTime": {
-            "type": "boolean"
+          "extensionFirstRep": {
+            "$ref": "#/components/schemas/Extension"
           },
           "primitive": {
             "type": "boolean"
           },
           "resource": {
+            "type": "boolean"
+          },
+          "booleanPrimitive": {
+            "type": "boolean"
+          },
+          "dateTime": {
             "type": "boolean"
           }
         }
@@ -2142,6 +2264,9 @@
           },
           "language": {
             "type": "string"
+          },
+          "empty": {
+            "type": "boolean"
           },
           "resourceType": {
             "type": "string",
@@ -2294,20 +2419,17 @@
               "VisionPrescription"
             ]
           },
+          "implicitRulesElement": {
+            "$ref": "#/components/schemas/UriType"
+          },
           "idElement": {
             "$ref": "#/components/schemas/IdType"
-          },
-          "idBase": {
-            "type": "string"
           },
           "languageElement": {
             "$ref": "#/components/schemas/CodeType"
           },
-          "implicitRulesElement": {
-            "$ref": "#/components/schemas/UriType"
-          },
-          "empty": {
-            "type": "boolean"
+          "idBase": {
+            "type": "string"
           },
           "structureFhirVersionEnum": {
             "type": "string",
@@ -2323,13 +2445,13 @@
           "resource": {
             "type": "boolean"
           },
+          "primitive": {
+            "type": "boolean"
+          },
           "booleanPrimitive": {
             "type": "boolean"
           },
           "dateTime": {
-            "type": "boolean"
-          },
-          "primitive": {
             "type": "boolean"
           }
         }
@@ -2358,9 +2480,6 @@
           "valueNotNull": {
             "type": "string"
           },
-          "valueAsString": {
-            "type": "string"
-          },
           "primitive": {
             "type": "boolean"
           },
@@ -2370,8 +2489,8 @@
           "value": {
             "type": "string"
           },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
+          "valueAsString": {
+            "type": "string"
           },
           "idElement": {
             "$ref": "#/components/schemas/StringType"
@@ -2379,13 +2498,16 @@
           "idBase": {
             "type": "string"
           },
+          "extensionFirstRep": {
+            "$ref": "#/components/schemas/Extension"
+          },
+          "resource": {
+            "type": "boolean"
+          },
           "booleanPrimitive": {
             "type": "boolean"
           },
           "dateTime": {
-            "type": "boolean"
-          },
-          "resource": {
             "type": "boolean"
           }
         }
@@ -2414,25 +2536,25 @@
           "empty": {
             "type": "boolean"
           },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
-          },
           "idElement": {
             "$ref": "#/components/schemas/StringType"
           },
           "idBase": {
             "type": "string"
           },
-          "booleanPrimitive": {
-            "type": "boolean"
-          },
-          "dateTime": {
-            "type": "boolean"
+          "extensionFirstRep": {
+            "$ref": "#/components/schemas/Extension"
           },
           "primitive": {
             "type": "boolean"
           },
           "resource": {
+            "type": "boolean"
+          },
+          "booleanPrimitive": {
+            "type": "boolean"
+          },
+          "dateTime": {
             "type": "boolean"
           }
         }
@@ -2458,9 +2580,6 @@
           "disallowExtensions": {
             "type": "boolean"
           },
-          "valueAsString": {
-            "type": "string"
-          },
           "primitive": {
             "type": "boolean"
           },
@@ -2470,8 +2589,8 @@
           "value": {
             "type": "string"
           },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
+          "valueAsString": {
+            "type": "string"
           },
           "idElement": {
             "$ref": "#/components/schemas/StringType"
@@ -2479,13 +2598,16 @@
           "idBase": {
             "type": "string"
           },
+          "extensionFirstRep": {
+            "$ref": "#/components/schemas/Extension"
+          },
+          "resource": {
+            "type": "boolean"
+          },
           "booleanPrimitive": {
             "type": "boolean"
           },
           "dateTime": {
-            "type": "boolean"
-          },
-          "resource": {
             "type": "boolean"
           }
         }
@@ -2525,26 +2647,14 @@
           "content": {
             "type": "string"
           },
+          "empty": {
+            "type": "boolean"
+          },
+          "value": {
+            "type": "string"
+          },
           "valueAsString": {
             "type": "string"
-          },
-          "para": {
-            "type": "boolean"
-          },
-          "firstElement": {
-            "$ref": "#/components/schemas/XhtmlNode"
-          },
-          "noPretty": {
-            "type": "boolean"
-          },
-          "nsDecl": {
-            "type": "string"
-          },
-          "formatCommentsPre": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
           },
           "formatCommentsPost": {
             "type": "array",
@@ -2552,11 +2662,23 @@
               "type": "string"
             }
           },
-          "empty": {
+          "formatCommentsPre": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "firstElement": {
+            "$ref": "#/components/schemas/XhtmlNode"
+          },
+          "nsDecl": {
+            "type": "string"
+          },
+          "noPretty": {
             "type": "boolean"
           },
-          "value": {
-            "type": "string"
+          "para": {
+            "type": "boolean"
           }
         }
       },
