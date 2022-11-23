@@ -6,7 +6,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8080",
+      "url": "http://localhost:8123",
       "description": "Generated server url"
     }
   ],
@@ -120,6 +120,84 @@
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/_projects/data_sources": {
+      "get": {
+        "tags": [
+          "Project Controller"
+        ],
+        "summary": "Gets a listing of data sources currently used for a given project UID",
+        "operationId": "getDataSources",
+        "parameters": [
+          {
+            "name": "project_uid",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DataSourceInformation"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Project Controller"
+        ],
+        "summary": "Updates list of data sources associated with a given project",
+        "operationId": "writeDataSources",
+        "parameters": [
+          {
+            "name": "project_uid",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DataSourceInformation"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "boolean"
                 }
               }
             }
@@ -609,6 +687,30 @@
         }
       }
     },
+    "/_projects/available_data_sources": {
+      "get": {
+        "tags": [
+          "Project Controller"
+        ],
+        "summary": "Gets a listing of available data sources",
+        "operationId": "getAvailableDataSources",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DataSourceInformation"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/_projects/": {
       "get": {
         "tags": [
@@ -684,6 +786,41 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Job"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/_jobs/data_sources": {
+      "get": {
+        "tags": [
+          "Job Controller"
+        ],
+        "summary": "Gets a listing of data sources currently used for a given job UID",
+        "operationId": "getDataSources_1",
+        "parameters": [
+          {
+            "name": "job_uid",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DataSourceInformation"
                   }
                 }
               }
@@ -772,7 +909,7 @@
                 "schema": {
                   "type": "object",
                   "additionalProperties": {
-                    "$ref": "#/components/schemas/DomainResource"
+                    "$ref": "#/components/schemas/JsonNode"
                   }
                 }
               }
@@ -957,6 +1094,20 @@
           }
         }
       },
+      "DataSourceInformation": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "backendID": {
+            "type": "string"
+          }
+        }
+      },
       "Criterion": {
         "type": "object",
         "properties": {
@@ -1041,6 +1192,15 @@
               "IN",
               "BETWEEN"
             ]
+          },
+          "expandedCodes": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         }
       },
@@ -1135,1552 +1295,8 @@
           }
         }
       },
-      "BooleanType": {
-        "type": "object",
-        "properties": {
-          "formatCommentsPre": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "formatCommentsPost": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "id": {
-            "type": "string"
-          },
-          "extension": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Extension"
-            }
-          },
-          "disallowExtensions": {
-            "type": "boolean"
-          },
-          "booleanPrimitive": {
-            "type": "boolean"
-          },
-          "value": {
-            "type": "boolean"
-          },
-          "valueAsString": {
-            "type": "string"
-          },
-          "empty": {
-            "type": "boolean"
-          },
-          "primitive": {
-            "type": "boolean"
-          },
-          "idElement": {
-            "$ref": "#/components/schemas/StringType"
-          },
-          "idBase": {
-            "type": "string"
-          },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
-          },
-          "resource": {
-            "type": "boolean"
-          },
-          "dateTime": {
-            "type": "boolean"
-          }
-        }
-      },
-      "CanonicalType": {
-        "type": "object",
-        "properties": {
-          "formatCommentsPre": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "formatCommentsPost": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "id": {
-            "type": "string"
-          },
-          "extension": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Extension"
-            }
-          },
-          "disallowExtensions": {
-            "type": "boolean"
-          },
-          "primitive": {
-            "type": "boolean"
-          },
-          "empty": {
-            "type": "boolean"
-          },
-          "value": {
-            "type": "string"
-          },
-          "valueAsString": {
-            "type": "string"
-          },
-          "idElement": {
-            "$ref": "#/components/schemas/StringType"
-          },
-          "idBase": {
-            "type": "string"
-          },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
-          },
-          "resource": {
-            "type": "boolean"
-          },
-          "booleanPrimitive": {
-            "type": "boolean"
-          },
-          "dateTime": {
-            "type": "boolean"
-          }
-        }
-      },
-      "CodeType": {
-        "type": "object",
-        "properties": {
-          "formatCommentsPre": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "formatCommentsPost": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "id": {
-            "type": "string"
-          },
-          "extension": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Extension"
-            }
-          },
-          "disallowExtensions": {
-            "type": "boolean"
-          },
-          "system": {
-            "type": "string"
-          },
-          "version": {
-            "type": "string"
-          },
-          "code": {
-            "type": "string"
-          },
-          "display": {
-            "type": "string"
-          },
-          "valueNotNull": {
-            "type": "string"
-          },
-          "primitive": {
-            "type": "boolean"
-          },
-          "empty": {
-            "type": "boolean"
-          },
-          "value": {
-            "type": "string"
-          },
-          "valueAsString": {
-            "type": "string"
-          },
-          "idElement": {
-            "$ref": "#/components/schemas/StringType"
-          },
-          "idBase": {
-            "type": "string"
-          },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
-          },
-          "resource": {
-            "type": "boolean"
-          },
-          "booleanPrimitive": {
-            "type": "boolean"
-          },
-          "dateTime": {
-            "type": "boolean"
-          }
-        }
-      },
-      "Coding": {
-        "type": "object",
-        "properties": {
-          "formatCommentsPre": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "formatCommentsPost": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "id": {
-            "type": "string"
-          },
-          "extension": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Extension"
-            }
-          },
-          "disallowExtensions": {
-            "type": "boolean"
-          },
-          "system": {
-            "type": "string"
-          },
-          "version": {
-            "type": "string"
-          },
-          "code": {
-            "type": "string"
-          },
-          "display": {
-            "type": "string"
-          },
-          "userSelected": {
-            "type": "boolean"
-          },
-          "empty": {
-            "type": "boolean"
-          },
-          "systemElement": {
-            "$ref": "#/components/schemas/UriType"
-          },
-          "codeElement": {
-            "$ref": "#/components/schemas/CodeType"
-          },
-          "userSelectedElement": {
-            "$ref": "#/components/schemas/BooleanType"
-          },
-          "displayElement": {
-            "$ref": "#/components/schemas/StringType"
-          },
-          "versionElement": {
-            "$ref": "#/components/schemas/StringType"
-          },
-          "idElement": {
-            "$ref": "#/components/schemas/StringType"
-          },
-          "idBase": {
-            "type": "string"
-          },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
-          },
-          "primitive": {
-            "type": "boolean"
-          },
-          "resource": {
-            "type": "boolean"
-          },
-          "booleanPrimitive": {
-            "type": "boolean"
-          },
-          "dateTime": {
-            "type": "boolean"
-          }
-        }
-      },
-      "DomainResource": {
-        "type": "object",
-        "properties": {
-          "formatCommentsPre": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "formatCommentsPost": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "id": {
-            "type": "string"
-          },
-          "meta": {
-            "$ref": "#/components/schemas/Meta"
-          },
-          "implicitRules": {
-            "type": "string"
-          },
-          "language": {
-            "type": "string"
-          },
-          "text": {
-            "$ref": "#/components/schemas/Narrative"
-          },
-          "contained": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Resource"
-            }
-          },
-          "extension": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Extension"
-            }
-          },
-          "modifierExtension": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Extension"
-            }
-          },
-          "empty": {
-            "type": "boolean"
-          },
-          "languageElement": {
-            "$ref": "#/components/schemas/CodeType"
-          },
-          "idElement": {
-            "$ref": "#/components/schemas/IdType"
-          },
-          "structureFhirVersionEnum": {
-            "type": "string",
-            "enum": [
-              "DSTU2",
-              "DSTU2_HL7ORG",
-              "DSTU2_1",
-              "DSTU3",
-              "R4",
-              "R5"
-            ]
-          },
-          "resourceType": {
-            "type": "string",
-            "enum": [
-              "Account",
-              "ActivityDefinition",
-              "AdverseEvent",
-              "AllergyIntolerance",
-              "Appointment",
-              "AppointmentResponse",
-              "AuditEvent",
-              "Basic",
-              "Binary",
-              "BiologicallyDerivedProduct",
-              "BodyStructure",
-              "Bundle",
-              "CapabilityStatement",
-              "CarePlan",
-              "CareTeam",
-              "CatalogEntry",
-              "ChargeItem",
-              "ChargeItemDefinition",
-              "Claim",
-              "ClaimResponse",
-              "ClinicalImpression",
-              "CodeSystem",
-              "Communication",
-              "CommunicationRequest",
-              "CompartmentDefinition",
-              "Composition",
-              "ConceptMap",
-              "Condition",
-              "Consent",
-              "Contract",
-              "Coverage",
-              "CoverageEligibilityRequest",
-              "CoverageEligibilityResponse",
-              "DetectedIssue",
-              "Device",
-              "DeviceDefinition",
-              "DeviceMetric",
-              "DeviceRequest",
-              "DeviceUseStatement",
-              "DiagnosticReport",
-              "DocumentManifest",
-              "DocumentReference",
-              "EffectEvidenceSynthesis",
-              "Encounter",
-              "Endpoint",
-              "EnrollmentRequest",
-              "EnrollmentResponse",
-              "EpisodeOfCare",
-              "EventDefinition",
-              "Evidence",
-              "EvidenceVariable",
-              "ExampleScenario",
-              "ExplanationOfBenefit",
-              "FamilyMemberHistory",
-              "Flag",
-              "Goal",
-              "GraphDefinition",
-              "Group",
-              "GuidanceResponse",
-              "HealthcareService",
-              "ImagingStudy",
-              "Immunization",
-              "ImmunizationEvaluation",
-              "ImmunizationRecommendation",
-              "ImplementationGuide",
-              "InsurancePlan",
-              "Invoice",
-              "Library",
-              "Linkage",
-              "List",
-              "Location",
-              "Measure",
-              "MeasureReport",
-              "Media",
-              "Medication",
-              "MedicationAdministration",
-              "MedicationDispense",
-              "MedicationKnowledge",
-              "MedicationRequest",
-              "MedicationStatement",
-              "MedicinalProduct",
-              "MedicinalProductAuthorization",
-              "MedicinalProductContraindication",
-              "MedicinalProductIndication",
-              "MedicinalProductIngredient",
-              "MedicinalProductInteraction",
-              "MedicinalProductManufactured",
-              "MedicinalProductPackaged",
-              "MedicinalProductPharmaceutical",
-              "MedicinalProductUndesirableEffect",
-              "MessageDefinition",
-              "MessageHeader",
-              "MolecularSequence",
-              "NamingSystem",
-              "NutritionOrder",
-              "Observation",
-              "ObservationDefinition",
-              "OperationDefinition",
-              "OperationOutcome",
-              "Organization",
-              "OrganizationAffiliation",
-              "Parameters",
-              "Patient",
-              "PaymentNotice",
-              "PaymentReconciliation",
-              "Person",
-              "PlanDefinition",
-              "Practitioner",
-              "PractitionerRole",
-              "Procedure",
-              "Provenance",
-              "Questionnaire",
-              "QuestionnaireResponse",
-              "RelatedPerson",
-              "RequestGroup",
-              "ResearchDefinition",
-              "ResearchElementDefinition",
-              "ResearchStudy",
-              "ResearchSubject",
-              "RiskAssessment",
-              "RiskEvidenceSynthesis",
-              "Schedule",
-              "SearchParameter",
-              "ServiceRequest",
-              "Slot",
-              "Specimen",
-              "SpecimenDefinition",
-              "StructureDefinition",
-              "StructureMap",
-              "Subscription",
-              "Substance",
-              "SubstanceNucleicAcid",
-              "SubstancePolymer",
-              "SubstanceProtein",
-              "SubstanceReferenceInformation",
-              "SubstanceSourceMaterial",
-              "SubstanceSpecification",
-              "SupplyDelivery",
-              "SupplyRequest",
-              "Task",
-              "TerminologyCapabilities",
-              "TestReport",
-              "TestScript",
-              "ValueSet",
-              "VerificationResult",
-              "VisionPrescription"
-            ]
-          },
-          "implicitRulesElement": {
-            "$ref": "#/components/schemas/UriType"
-          },
-          "idBase": {
-            "type": "string"
-          },
-          "resource": {
-            "type": "boolean"
-          },
-          "primitive": {
-            "type": "boolean"
-          },
-          "booleanPrimitive": {
-            "type": "boolean"
-          },
-          "dateTime": {
-            "type": "boolean"
-          }
-        }
-      },
-      "EnumFactoryNarrativeStatus": {
+      "JsonNode": {
         "type": "object"
-      },
-      "EnumerationNarrativeStatus": {
-        "type": "object",
-        "properties": {
-          "formatCommentsPre": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "formatCommentsPost": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "id": {
-            "type": "string"
-          },
-          "extension": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Extension"
-            }
-          },
-          "disallowExtensions": {
-            "type": "boolean"
-          },
-          "version": {
-            "type": "string"
-          },
-          "enumFactory": {
-            "$ref": "#/components/schemas/EnumFactoryNarrativeStatus"
-          },
-          "system": {
-            "type": "string"
-          },
-          "code": {
-            "type": "string"
-          },
-          "display": {
-            "type": "string"
-          },
-          "value": {
-            "type": "string",
-            "enum": [
-              "GENERATED",
-              "EXTENSIONS",
-              "ADDITIONAL",
-              "EMPTY",
-              "NULL"
-            ]
-          },
-          "valueAsString": {
-            "type": "string"
-          },
-          "empty": {
-            "type": "boolean"
-          },
-          "primitive": {
-            "type": "boolean"
-          },
-          "idElement": {
-            "$ref": "#/components/schemas/StringType"
-          },
-          "idBase": {
-            "type": "string"
-          },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
-          },
-          "resource": {
-            "type": "boolean"
-          },
-          "booleanPrimitive": {
-            "type": "boolean"
-          },
-          "dateTime": {
-            "type": "boolean"
-          }
-        }
-      },
-      "Extension": {
-        "type": "object",
-        "properties": {
-          "formatCommentsPre": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "formatCommentsPost": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "id": {
-            "type": "string"
-          },
-          "disallowExtensions": {
-            "type": "boolean"
-          },
-          "url": {
-            "type": "string"
-          },
-          "value": {
-            "$ref": "#/components/schemas/Type"
-          },
-          "empty": {
-            "type": "boolean"
-          },
-          "urlElement": {
-            "$ref": "#/components/schemas/UriType"
-          },
-          "valueAsPrimitive": {
-            "$ref": "#/components/schemas/IPrimitiveTypeObject"
-          },
-          "idElement": {
-            "$ref": "#/components/schemas/StringType"
-          },
-          "idBase": {
-            "type": "string"
-          },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
-          },
-          "primitive": {
-            "type": "boolean"
-          },
-          "resource": {
-            "type": "boolean"
-          },
-          "booleanPrimitive": {
-            "type": "boolean"
-          },
-          "dateTime": {
-            "type": "boolean"
-          }
-        }
-      },
-      "IPrimitiveTypeObject": {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "object"
-          },
-          "valueAsString": {
-            "type": "string"
-          },
-          "empty": {
-            "type": "boolean"
-          },
-          "formatCommentsPost": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "formatCommentsPre": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "IdType": {
-        "type": "object",
-        "properties": {
-          "formatCommentsPre": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "formatCommentsPost": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "id": {
-            "type": "string"
-          },
-          "extension": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Extension"
-            }
-          },
-          "disallowExtensions": {
-            "type": "boolean"
-          },
-          "empty": {
-            "type": "boolean"
-          },
-          "value": {
-            "type": "string"
-          },
-          "absolute": {
-            "type": "boolean"
-          },
-          "local": {
-            "type": "boolean"
-          },
-          "valueAsString": {
-            "type": "string"
-          },
-          "resourceType": {
-            "type": "string"
-          },
-          "baseUrl": {
-            "type": "string"
-          },
-          "idPartAsBigDecimal": {
-            "type": "number"
-          },
-          "versionIdPartValidLong": {
-            "type": "boolean"
-          },
-          "versionIdPartAsLong": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "urn": {
-            "type": "boolean"
-          },
-          "idPartValid": {
-            "type": "boolean"
-          },
-          "idPart": {
-            "type": "string"
-          },
-          "idPartAsLong": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "versionIdPart": {
-            "type": "string"
-          },
-          "idPartValidLong": {
-            "type": "boolean"
-          },
-          "primitive": {
-            "type": "boolean"
-          },
-          "idElement": {
-            "$ref": "#/components/schemas/StringType"
-          },
-          "idBase": {
-            "type": "string"
-          },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
-          },
-          "resource": {
-            "type": "boolean"
-          },
-          "booleanPrimitive": {
-            "type": "boolean"
-          },
-          "dateTime": {
-            "type": "boolean"
-          }
-        }
-      },
-      "InstantType": {
-        "type": "object",
-        "properties": {
-          "formatCommentsPre": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "formatCommentsPost": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "id": {
-            "type": "string"
-          },
-          "extension": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Extension"
-            }
-          },
-          "disallowExtensions": {
-            "type": "boolean"
-          },
-          "value": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "precision": {
-            "type": "string",
-            "enum": [
-              "YEAR",
-              "MONTH",
-              "DAY",
-              "MINUTE",
-              "SECOND",
-              "MILLI"
-            ]
-          },
-          "year": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "hour": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "minute": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "second": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "month": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "day": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "millis": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "timeZone": {
-            "type": "object",
-            "properties": {
-              "dstsavings": {
-                "type": "integer",
-                "format": "int32"
-              },
-              "rawOffset": {
-                "type": "integer",
-                "format": "int32"
-              },
-              "id": {
-                "type": "string"
-              },
-              "displayName": {
-                "type": "string"
-              }
-            }
-          },
-          "nanos": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "dateTime": {
-            "type": "boolean"
-          },
-          "valueAsString": {
-            "type": "string"
-          },
-          "timeZoneZulu": {
-            "type": "boolean"
-          },
-          "valueAsCalendar": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "today": {
-            "type": "boolean"
-          },
-          "valueAsV3String": {
-            "type": "string",
-            "writeOnly": true
-          },
-          "primitive": {
-            "type": "boolean"
-          },
-          "empty": {
-            "type": "boolean"
-          },
-          "idElement": {
-            "$ref": "#/components/schemas/StringType"
-          },
-          "idBase": {
-            "type": "string"
-          },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
-          },
-          "resource": {
-            "type": "boolean"
-          },
-          "booleanPrimitive": {
-            "type": "boolean"
-          }
-        }
-      },
-      "Location": {
-        "type": "object",
-        "properties": {
-          "line": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "column": {
-            "type": "integer",
-            "format": "int32"
-          }
-        }
-      },
-      "Meta": {
-        "type": "object",
-        "properties": {
-          "formatCommentsPre": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "formatCommentsPost": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "id": {
-            "type": "string"
-          },
-          "extension": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Extension"
-            }
-          },
-          "disallowExtensions": {
-            "type": "boolean"
-          },
-          "versionId": {
-            "type": "string"
-          },
-          "lastUpdated": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "source": {
-            "type": "string"
-          },
-          "profile": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CanonicalType"
-            }
-          },
-          "security": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Coding"
-            }
-          },
-          "tag": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Coding"
-            }
-          },
-          "empty": {
-            "type": "boolean"
-          },
-          "versionIdElement": {
-            "$ref": "#/components/schemas/IdType"
-          },
-          "lastUpdatedElement": {
-            "$ref": "#/components/schemas/InstantType"
-          },
-          "securityFirstRep": {
-            "$ref": "#/components/schemas/Coding"
-          },
-          "sourceElement": {
-            "$ref": "#/components/schemas/UriType"
-          },
-          "tagFirstRep": {
-            "$ref": "#/components/schemas/Coding"
-          },
-          "idElement": {
-            "$ref": "#/components/schemas/StringType"
-          },
-          "idBase": {
-            "type": "string"
-          },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
-          },
-          "primitive": {
-            "type": "boolean"
-          },
-          "resource": {
-            "type": "boolean"
-          },
-          "booleanPrimitive": {
-            "type": "boolean"
-          },
-          "dateTime": {
-            "type": "boolean"
-          }
-        }
-      },
-      "Narrative": {
-        "type": "object",
-        "properties": {
-          "formatCommentsPre": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "formatCommentsPost": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "id": {
-            "type": "string"
-          },
-          "extension": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Extension"
-            }
-          },
-          "disallowExtensions": {
-            "type": "boolean"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "GENERATED",
-              "EXTENSIONS",
-              "ADDITIONAL",
-              "EMPTY",
-              "NULL"
-            ]
-          },
-          "div": {
-            "$ref": "#/components/schemas/XhtmlNode"
-          },
-          "empty": {
-            "type": "boolean"
-          },
-          "statusElement": {
-            "$ref": "#/components/schemas/EnumerationNarrativeStatus"
-          },
-          "divAsString": {
-            "type": "string"
-          },
-          "statusAsString": {
-            "type": "string"
-          },
-          "idElement": {
-            "$ref": "#/components/schemas/StringType"
-          },
-          "idBase": {
-            "type": "string"
-          },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
-          },
-          "primitive": {
-            "type": "boolean"
-          },
-          "resource": {
-            "type": "boolean"
-          },
-          "booleanPrimitive": {
-            "type": "boolean"
-          },
-          "dateTime": {
-            "type": "boolean"
-          }
-        }
-      },
-      "Resource": {
-        "type": "object",
-        "properties": {
-          "formatCommentsPre": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "formatCommentsPost": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "id": {
-            "type": "string"
-          },
-          "meta": {
-            "$ref": "#/components/schemas/Meta"
-          },
-          "implicitRules": {
-            "type": "string"
-          },
-          "language": {
-            "type": "string"
-          },
-          "empty": {
-            "type": "boolean"
-          },
-          "resourceType": {
-            "type": "string",
-            "enum": [
-              "Account",
-              "ActivityDefinition",
-              "AdverseEvent",
-              "AllergyIntolerance",
-              "Appointment",
-              "AppointmentResponse",
-              "AuditEvent",
-              "Basic",
-              "Binary",
-              "BiologicallyDerivedProduct",
-              "BodyStructure",
-              "Bundle",
-              "CapabilityStatement",
-              "CarePlan",
-              "CareTeam",
-              "CatalogEntry",
-              "ChargeItem",
-              "ChargeItemDefinition",
-              "Claim",
-              "ClaimResponse",
-              "ClinicalImpression",
-              "CodeSystem",
-              "Communication",
-              "CommunicationRequest",
-              "CompartmentDefinition",
-              "Composition",
-              "ConceptMap",
-              "Condition",
-              "Consent",
-              "Contract",
-              "Coverage",
-              "CoverageEligibilityRequest",
-              "CoverageEligibilityResponse",
-              "DetectedIssue",
-              "Device",
-              "DeviceDefinition",
-              "DeviceMetric",
-              "DeviceRequest",
-              "DeviceUseStatement",
-              "DiagnosticReport",
-              "DocumentManifest",
-              "DocumentReference",
-              "EffectEvidenceSynthesis",
-              "Encounter",
-              "Endpoint",
-              "EnrollmentRequest",
-              "EnrollmentResponse",
-              "EpisodeOfCare",
-              "EventDefinition",
-              "Evidence",
-              "EvidenceVariable",
-              "ExampleScenario",
-              "ExplanationOfBenefit",
-              "FamilyMemberHistory",
-              "Flag",
-              "Goal",
-              "GraphDefinition",
-              "Group",
-              "GuidanceResponse",
-              "HealthcareService",
-              "ImagingStudy",
-              "Immunization",
-              "ImmunizationEvaluation",
-              "ImmunizationRecommendation",
-              "ImplementationGuide",
-              "InsurancePlan",
-              "Invoice",
-              "Library",
-              "Linkage",
-              "List",
-              "Location",
-              "Measure",
-              "MeasureReport",
-              "Media",
-              "Medication",
-              "MedicationAdministration",
-              "MedicationDispense",
-              "MedicationKnowledge",
-              "MedicationRequest",
-              "MedicationStatement",
-              "MedicinalProduct",
-              "MedicinalProductAuthorization",
-              "MedicinalProductContraindication",
-              "MedicinalProductIndication",
-              "MedicinalProductIngredient",
-              "MedicinalProductInteraction",
-              "MedicinalProductManufactured",
-              "MedicinalProductPackaged",
-              "MedicinalProductPharmaceutical",
-              "MedicinalProductUndesirableEffect",
-              "MessageDefinition",
-              "MessageHeader",
-              "MolecularSequence",
-              "NamingSystem",
-              "NutritionOrder",
-              "Observation",
-              "ObservationDefinition",
-              "OperationDefinition",
-              "OperationOutcome",
-              "Organization",
-              "OrganizationAffiliation",
-              "Parameters",
-              "Patient",
-              "PaymentNotice",
-              "PaymentReconciliation",
-              "Person",
-              "PlanDefinition",
-              "Practitioner",
-              "PractitionerRole",
-              "Procedure",
-              "Provenance",
-              "Questionnaire",
-              "QuestionnaireResponse",
-              "RelatedPerson",
-              "RequestGroup",
-              "ResearchDefinition",
-              "ResearchElementDefinition",
-              "ResearchStudy",
-              "ResearchSubject",
-              "RiskAssessment",
-              "RiskEvidenceSynthesis",
-              "Schedule",
-              "SearchParameter",
-              "ServiceRequest",
-              "Slot",
-              "Specimen",
-              "SpecimenDefinition",
-              "StructureDefinition",
-              "StructureMap",
-              "Subscription",
-              "Substance",
-              "SubstanceNucleicAcid",
-              "SubstancePolymer",
-              "SubstanceProtein",
-              "SubstanceReferenceInformation",
-              "SubstanceSourceMaterial",
-              "SubstanceSpecification",
-              "SupplyDelivery",
-              "SupplyRequest",
-              "Task",
-              "TerminologyCapabilities",
-              "TestReport",
-              "TestScript",
-              "ValueSet",
-              "VerificationResult",
-              "VisionPrescription"
-            ]
-          },
-          "implicitRulesElement": {
-            "$ref": "#/components/schemas/UriType"
-          },
-          "idElement": {
-            "$ref": "#/components/schemas/IdType"
-          },
-          "languageElement": {
-            "$ref": "#/components/schemas/CodeType"
-          },
-          "idBase": {
-            "type": "string"
-          },
-          "structureFhirVersionEnum": {
-            "type": "string",
-            "enum": [
-              "DSTU2",
-              "DSTU2_HL7ORG",
-              "DSTU2_1",
-              "DSTU3",
-              "R4",
-              "R5"
-            ]
-          },
-          "resource": {
-            "type": "boolean"
-          },
-          "primitive": {
-            "type": "boolean"
-          },
-          "booleanPrimitive": {
-            "type": "boolean"
-          },
-          "dateTime": {
-            "type": "boolean"
-          }
-        }
-      },
-      "StringType": {
-        "type": "object",
-        "properties": {
-          "formatCommentsPre": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "formatCommentsPost": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "id": {
-            "type": "string"
-          },
-          "disallowExtensions": {
-            "type": "boolean"
-          },
-          "valueNotNull": {
-            "type": "string"
-          },
-          "primitive": {
-            "type": "boolean"
-          },
-          "empty": {
-            "type": "boolean"
-          },
-          "value": {
-            "type": "string"
-          },
-          "valueAsString": {
-            "type": "string"
-          },
-          "idElement": {
-            "$ref": "#/components/schemas/StringType"
-          },
-          "idBase": {
-            "type": "string"
-          },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
-          },
-          "resource": {
-            "type": "boolean"
-          },
-          "booleanPrimitive": {
-            "type": "boolean"
-          },
-          "dateTime": {
-            "type": "boolean"
-          }
-        }
-      },
-      "Type": {
-        "type": "object",
-        "properties": {
-          "formatCommentsPre": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "formatCommentsPost": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "id": {
-            "type": "string"
-          },
-          "disallowExtensions": {
-            "type": "boolean"
-          },
-          "empty": {
-            "type": "boolean"
-          },
-          "idElement": {
-            "$ref": "#/components/schemas/StringType"
-          },
-          "idBase": {
-            "type": "string"
-          },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
-          },
-          "primitive": {
-            "type": "boolean"
-          },
-          "resource": {
-            "type": "boolean"
-          },
-          "booleanPrimitive": {
-            "type": "boolean"
-          },
-          "dateTime": {
-            "type": "boolean"
-          }
-        }
-      },
-      "UriType": {
-        "type": "object",
-        "properties": {
-          "formatCommentsPre": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "formatCommentsPost": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "id": {
-            "type": "string"
-          },
-          "disallowExtensions": {
-            "type": "boolean"
-          },
-          "primitive": {
-            "type": "boolean"
-          },
-          "empty": {
-            "type": "boolean"
-          },
-          "value": {
-            "type": "string"
-          },
-          "valueAsString": {
-            "type": "string"
-          },
-          "idElement": {
-            "$ref": "#/components/schemas/StringType"
-          },
-          "idBase": {
-            "type": "string"
-          },
-          "extensionFirstRep": {
-            "$ref": "#/components/schemas/Extension"
-          },
-          "resource": {
-            "type": "boolean"
-          },
-          "booleanPrimitive": {
-            "type": "boolean"
-          },
-          "dateTime": {
-            "type": "boolean"
-          }
-        }
-      },
-      "XhtmlNode": {
-        "type": "object",
-        "properties": {
-          "location": {
-            "$ref": "#/components/schemas/Location"
-          },
-          "nodeType": {
-            "type": "string",
-            "enum": [
-              "Element",
-              "Text",
-              "Comment",
-              "DocType",
-              "Document",
-              "Instruction"
-            ]
-          },
-          "name": {
-            "type": "string"
-          },
-          "attributes": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            }
-          },
-          "childNodes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/XhtmlNode"
-            }
-          },
-          "content": {
-            "type": "string"
-          },
-          "empty": {
-            "type": "boolean"
-          },
-          "value": {
-            "type": "string"
-          },
-          "valueAsString": {
-            "type": "string"
-          },
-          "formatCommentsPost": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "formatCommentsPre": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "firstElement": {
-            "$ref": "#/components/schemas/XhtmlNode"
-          },
-          "nsDecl": {
-            "type": "string"
-          },
-          "noPretty": {
-            "type": "boolean"
-          },
-          "para": {
-            "type": "boolean"
-          }
-        }
       },
       "CohortCandidate": {
         "type": "object",
